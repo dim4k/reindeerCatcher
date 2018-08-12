@@ -96,11 +96,13 @@ def better_script():
         if im.getpixel(reindeer_coord) != (233, 234, 237):
             current_user_coord = get_cords()
             click_on_coord(reindeer_coord)
-            time.sleep(2)
+            time.sleep(1)
             press_f5()
             print('\033[92m' + '=== Reindeer captured ===')
             mouse_pos(current_user_coord)
-        time.sleep(2)
+            # Just to be sure that the page is fully reload
+            time.sleep(3)
+        time.sleep(1)
 
 
 def main():
