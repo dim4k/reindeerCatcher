@@ -11,7 +11,6 @@ from PIL import ImageGrab
 import win32api
 import win32con
 import time
-from numpy import *
 
 # Globals
 # ------------------
@@ -33,12 +32,6 @@ def left_click():
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 
-def press_f5():
-    win32api.keybd_event(0x74, 0, 0, 0)
-    time.sleep(.05)
-    win32api.keybd_event(0x74, 0, win32con.KEYEVENTF_KEYUP, 0)
-
-
 def mouse_pos(cord):
     win32api.SetCursorPos((x_pad + cord[0], y_pad + cord[1]))
 
@@ -50,55 +43,58 @@ def get_cords():
     return x, y
 
 
-def is_on_known_coord():
-    x, y = win32api.GetCursorPos()
-    x = x - x_pad
-    y = y - y_pad
-    return (x == reindeer_coord[0] and y == reindeer_coord[1]) or (x == exitModal_coord[0] and y == exitModal_coord[1])
-
-
 def click_on_coord(coord):
+    current_coord = get_cords()
     mouse_pos(coord)
     left_click()
+    mouse_pos(current_coord)
 
 
-# Only work one time, after one pop reindeer won't spawn if page is not reload i guess
-def old_script():
-    # Initialize cursor position
-    mouse_pos(reindeer_coord)
+def scroll_on_coord(coord, distance):
+    current_coord = get_cords()
+    mouse_pos(coord)
+    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, distance, 0)
+    mouse_pos(current_coord)
+
+
+def refresh(coord):
+    current_coord = get_cords()
+    mouse_pos(coord)
+    left_click()
+    win32api.keybd_event(0x74, 0, 0, 0)
+    time.sleep(.05)
+    win32api.keybd_event(0x74, 0, win32con.KEYEVENTF_KEYUP, 0)
+    mouse_pos(current_coord)
+
+
+def start_script():
     print('\033[93m' + 'Let the hunt begin !')
     i = 0
-    # Script will loop without any user mouse movement
-    while is_on_known_coord():
-        im = screen_grab()
-        # Check if pixel color is not matching the dealabs default background
-        if im.getpixel(reindeer_coord) != (233, 234, 237):
-            i += 1
-            click_on_coord(reindeer_coord)
-            time.sleep(2)
-            click_on_coord(exitModal_coord)
-            print('\033[92m' + 'Reindeer captured !')
-        time.sleep(2)
-    print('\033[93m' + 'Script stopped by user input')
-    print('\033[93m' + '=== Total number of reindeer : ' + str(i) + ' ===')
-
-
-def better_script():
-    print('\033[93m' + 'Let the hunt begin !')
     # Script need to be stopped
     while 1:
+        i += 1
         im = screen_grab()
         # Check if pixel color is not matching the dealabs default background
         if im.getpixel(reindeer_coord) != (233, 234, 237):
-            current_user_coord = get_cords()
             click_on_coord(reindeer_coord)
             time.sleep(1)
-            press_f5()
+            refresh(reindeer_coord)
             print('\033[92m' + '=== Reindeer captured ===')
-            mouse_pos(current_user_coord)
             # Just to be sure that the page is fully reload
             time.sleep(3)
-        time.sleep(1)
+
+        # Every approx half hour go on page and scroll
+        if i % 900 == 0:
+            scroll_on_coord(reindeer_coord, -2000)
+
+        # Every approx hour go refresh the page
+        if i % 1800 == 0:
+            scroll_on_coord(reindeer_coord, -2000)
+            click_on_coord(reindeer_coord)
+            time.sleep(2)
+            refresh(reindeer_coord)
+
+        time.sleep(2)
 
 
 def main():
@@ -106,7 +102,7 @@ def main():
     print('\033[95m' + 'Don''t let any other program go in front of your web browser in the lower right 1/4 of your screen')
     print('\033[95m' + 'Press CTRL+C on this terminal to kill the process')
     raw_input('\033[91m' + '*** Press any key to start ***')
-    better_script()
+    start_script()
 
 
 if __name__ == '__main__':
