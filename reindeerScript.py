@@ -85,10 +85,12 @@ def start_script():
 
         # Every approx half hour go on page and scroll
         if i % 900 == 0:
+            print('\033[93m' + 'Auto-scroll')
             scroll_on_coord(reindeer_coord, -2000)
 
         # Every approx hour go refresh the page
         if i % 1800 == 0:
+            print('\033[93m' + 'Auto-refresh')
             scroll_on_coord(reindeer_coord, -2000)
             click_on_coord(reindeer_coord)
             time.sleep(2)
