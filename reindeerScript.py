@@ -4,11 +4,7 @@
 # Catch every reindeer on Dealabs !
 # ---------------------------------
 #
-# 1 - Put Dealabs in fullscreen on your favorite browser (resolution need to be 1920x1080)
-# 2 - Run the script
-# 3 - Move your mouse to stop
-#
-# Base on Chris Kiehl code :
+# Based on Chris Kiehl code :
 # https://code.tutsplus.com/tutorials/how-to-build-a-python-bot-that-can-play-web-games--active-11117
 
 from PIL import ImageGrab
