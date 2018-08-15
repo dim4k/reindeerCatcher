@@ -75,7 +75,7 @@ def start_script():
         i += 1
         im = screen_grab()
         # Check if pixel color is not matching the dealabs default background
-        if im.getpixel(reindeer_coord) != (233, 234, 237):
+        if im.getpixel(reindeer_coord) != (233, 234, 237) and im.getpixel(reindeer_coord) != (255, 255, 255):
             click_on_coord(reindeer_coord)
             time.sleep(1)
             refresh(reindeer_coord)
@@ -84,12 +84,16 @@ def start_script():
             time.sleep(3)
 
         # Every approx half hour go on page and scroll
-        if i % 900 == 0:
-            print('\033[93m' + 'Auto-scroll')
+        if i % 20 == 0:
+            print('\033[93m' + 'Auto-scroll down')
             scroll_on_coord(reindeer_coord, -2000)
 
+        if i % 30 == 0:
+            print('\033[93m' + 'Auto-scroll up')
+            scroll_on_coord(reindeer_coord, 1500)
+
         # Every approx hour go refresh the page
-        if i % 1800 == 0:
+        if i % 150 == 0:
             print('\033[93m' + 'Auto-refresh')
             scroll_on_coord(reindeer_coord, -2000)
             click_on_coord(reindeer_coord)
